@@ -1,0 +1,3 @@
+tensorflow/data/generated_patches/
+*.tif
+*.hdp5

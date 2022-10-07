@@ -118,10 +118,10 @@ plt.ylabel('Loss')
 plt.legend()
 plt.show()
 
-acc = history.history['acc']
-# acc = history.history['accuracy']
-val_acc = history.history['val_acc']
-# val_acc = history.history['val_accuracy']
+# acc = history.history['acc']
+acc = history.history['accuracy']
+# val_acc = history.history['val_acc']
+val_acc = history.history['val_accuracy']
 
 plt.plot(epochs, acc, 'y', label='Training acc')
 plt.plot(epochs, val_acc, 'r', label='Validation acc')
@@ -144,25 +144,31 @@ print("IoU socre is: ", iou_score)
 #######################################################################
 # Predict on a few images
 model = get_model()
-model.load_weights('mitochondria_50_plus_100_epochs.hdf5')  # Trained for 50 epochs and then additional 100
+model.load_weights('mitochondria_test.hdf5')  # Trained for 50 epochs and then additional 100
 # model.load_weights('mitochondria_gpu_tf1.4.hdf5')  #Trained for 50 epochs
 
-test_img_number = random.randint(0, len(X_test))
+test_img_number = random.randint(0, len(X_test)-1)
 test_img = X_test[test_img_number]
 ground_truth = y_test[test_img_number]
 test_img_norm = test_img[:, :, 0][:, :, None]
 test_img_input = np.expand_dims(test_img_norm, 0)
 prediction = (model.predict(test_img_input)[0, :, :, 0] > 0.2).astype(np.uint8)
 
-test_img_other = cv2.imread('data/test_images/02-1_256.tif', 0)
+
+test_img_other = cv2.imread(r'D:\multi_media\DOC\Study\python\AI\Deep '
+                            r'Learn\Pytorch_project\Machine-Learning-Collection-master('
+                            r'U-net)\ML\Pytorch\image_segmentation\semantic_segmentation_unet\tensorflow\data'
+                            r'\testing_page_0004.tif', 0)
+print(test_img_other.shape)
+test_img_other = cv2.resize(test_img_input, (256, 256))
 # test_img_other = cv2.imread('data/test_images/img8.tif', 0)
-test_img_other_norm = np.expand_dims(normalize(np.array(test_img_other), axis=1), 2)
-test_img_other_norm = test_img_other_norm[:, :, 0][:, :, None]
-test_img_other_input = np.expand_dims(test_img_other_norm, 0)
+# test_img_other_norm = np.expand_dims(normalize(np.array(test_img_other), axis=1), 2)
+# test_img_other_norm = test_img_other_norm[:, :, 0][:, :, None]
+# test_img_other_input = np.expand_dims(test_img_other_norm, 0)
 
 # Predict and threshold for values above 0.5 probability
 # Change the probability threshold to low value (e.g. 0.05) for watershed demo.
-prediction_other = (model.predict(test_img_other_input)[0, :, :, 0] > 0.2).astype(np.uint8)
+prediction_other = (model.predict(test_img_other)[0, :, :, 0] > 0.2).astype(np.uint8)
 
 plt.figure(figsize=(16, 8))
 plt.subplot(231)
